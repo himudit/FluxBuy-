@@ -39,7 +39,7 @@ const productData = [
 
 const TodaySales = () => {
     return (
-        <section className="p-6">
+        <section className="p-6 sm:ml-13">
             <div className="flex flex-wrap items-center gap-2 text-red-500 text-sm font-semibold mb-2">
                 {/* <div className="w-2 h-2 bg-red-500 rounded-full"></div> */}
                 <div className="flex justify-between items-center mb-4">

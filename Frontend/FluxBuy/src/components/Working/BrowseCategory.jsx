@@ -31,11 +31,11 @@ const BrowseCategory = () => {
     };
 
     return (
-        <section className="p-6">
-            <div className="flex items-center gap-2 text-red-500 text-sm font-semibold mb-2">
+        <section className="p-6 w-full sm:w-[80%] sm:ml-30">
+            {/* <div className="flex items-center gap-2 text-red-500 text-sm font-semibold mb-2">
                 <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                 <p>Categories</p>
-            </div>
+            </div> */}
             <h2 className="text-2xl font-bold mb-4">Browse By Category</h2>
 
             <div className="relative">
@@ -62,7 +62,7 @@ const BrowseCategory = () => {
                                 </>
                             )
                         })
-                    }̥
+                    }
 
                 </div>
                 <button

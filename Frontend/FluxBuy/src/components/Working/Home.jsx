@@ -3,6 +3,7 @@ import { Spotlight } from '../UI/Spotlight'
 import Navbar from './Navbar'
 import TodaySales from './TodaySales'
 import BrowseCategory from './BrowseCategory'
+import ImageCorousel from './ImageCorousel'
 
 const Home = () => {
     return (
@@ -17,7 +18,13 @@ const Home = () => {
 
             </section>
             <TodaySales />
-            <BrowseCategory />
+            <div className='mt-10'>
+                <BrowseCategory />
+            </div>
+            <div className='mt-20'>
+                <ImageCorousel />
+            </div>
+
         </>
     )
 }

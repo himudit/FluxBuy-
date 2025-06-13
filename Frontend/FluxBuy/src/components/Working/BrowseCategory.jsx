@@ -37,7 +37,6 @@ const BrowseCategory = () => {
                 <p>Categories</p>
             </div> */}
             <h2 className="text-2xl font-bold mb-4">Browse By Category</h2>
-
             <div className="relative">
                 <button
                     className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 p-2 bg-white rounded-full shadow hover:bg-gray-100 cursor-pointer"

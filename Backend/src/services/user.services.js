@@ -8,11 +8,11 @@ class AuthService {
     static async comparePassword(password, hashedPassword) {
         return await bcrypt.compare(password, hashedPassword);
     }
-    static generateAuthToken(student) {
+    static generateAuthToken(user) {
         return jwt.sign(
             {
-                _id: student.id,
-                email: student.email,
+                _id: user.id,
+                email: user.email,
             },
             process.env.JWT_SECRET,
             { expiresIn: '1d' }

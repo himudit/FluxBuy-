@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
     },
     last_name: {
         type: String,
-        required: true, 
+        // required: true, 
         trim: true
     },
     email: {
@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
     gender: {
         type: String,
         enum: ['male', 'female', 'other'],
-        required: true
+        required: false
     }
 }, {
     timestamps: true,

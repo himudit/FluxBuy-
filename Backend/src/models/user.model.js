@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
     first_name: {
@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
     },
     last_name: {
         type: String,
-        required: true,
+        required: true, 
         trim: true
     },
     email: {
@@ -36,4 +36,4 @@ const userSchema = new mongoose.Schema({
     strict: true // ensures no extra fields are saved
 });
 
-export const User = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', userSchema);

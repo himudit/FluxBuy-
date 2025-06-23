@@ -1,9 +1,8 @@
 const Products = require('../models/product.model');
 
-const getAllProducts = async (Req, res, next) => {
+const getAllProducts = async (req, res, next) => {
     try {
-        const products = await Products.find();
-        console.log(products);
+        const products = await Products.find().limit(4);
         res.status(200).json(products);
     } catch (err) {
         res.status(404).json({
@@ -13,4 +12,21 @@ const getAllProducts = async (Req, res, next) => {
     }
 }
 
-module.exports = { getAllProducts }
+const getCategory = async (req, res, next) => {
+    try {
+        const categories = await Products.distinct('category');
+        res.status(200).json({
+            message: 'Categories fetched Successfully',
+            count: categories.length,
+            data: categories
+        });
+    } catch (err) {
+        res.status(404).json({
+            message: "Error fetching products"
+        })
+        console.log(err);
+    }
+}
+
+
+module.exports = { getAllProducts, getCategory }

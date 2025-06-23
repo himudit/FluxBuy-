@@ -1,21 +1,25 @@
-import React, { useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import CategoryCard from './CategoryCard';
-
-const categories = [
-    { id: 1, name: 'Phones' },
-    { id: 2, name: 'Computers' },
-    { id: 3, name: 'SmartWatch' },
-    { id: 4, name: 'Camera', active: true },
-    { id: 5, name: 'HeadPhones' },
-    { id: 6, name: 'Gaming' },
-    { id: 7, name: 'Speakers' },
-    { id: 8, name: 'Laptops' },
-    { id: 9, name: 'Laptops' },
-    { id: 10, name: 'Laptops' },
-];
+import axios from 'axios';
 
 const BrowseCategory = () => {
+    const [categories, setCategories] = useState([]);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/product/category`);
+                // console.log(response);
+                setCategories(response.data.data);
+            } catch (err) {
+                console.error('Error fetching categories:', err.message);
+            }
+        };
+
+        fetchCategories();
+    }, []);
+
     const scrollRef = useRef(null);
 
     const scroll = (direction) => {
@@ -45,7 +49,7 @@ const BrowseCategory = () => {
                     <FaArrowLeft />
                 </button>
 
-                <div ref={scrollRef}
+                {/* <div ref={scrollRef}
                     style={{
                         display: 'flex',
                         overflowX: 'auto',
@@ -54,16 +58,23 @@ const BrowseCategory = () => {
                         gap: '1rem',
                     }}>
                     {
-                        categories.map((d) => {
+                        categories.map((d, index) => {
                             return (
-                                <>
-                                    <CategoryCard key={d.id} name={d.name} active={d.active} />
-                                </>
+                                <CategoryCard key={index} name={d} active={d} />
                             )
                         })
                     }
 
+                </div> */}
+                <div
+                    ref={scrollRef}
+                    className="flex overflow-x-auto gap-4 px-8 scrollbar-hide scroll-smooth"
+                >
+                    {categories.map((d, index) => (
+                        <CategoryCard key={index} name={d} active={d} />
+                    ))}
                 </div>
+
                 <button
                     className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 p-2 bg-white rounded-full shadow hover:bg-gray-100 cursor-pointer"
                     onClick={() => scroll('right')}

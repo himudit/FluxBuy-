@@ -3,10 +3,20 @@ const connectDB = require('./src/config/db');
 const dotenv = require('dotenv');
 const userRoutes = require('./src/routes/users.routes')
 const productRoutes = require('./src/routes/products.routes')
+const cors = require('cors');
+
 // const seedProducts = require('./src/seed/seedProducts');
 dotenv.config();
 
 const app = express();
+
+const corsOptions = {
+    origin: '*',
+    credential: true
+}
+
+
+app.use(cors(corsOptions))
 
 app.use(express.json());
 

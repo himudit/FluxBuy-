@@ -2,6 +2,8 @@ const express = require('express');
 const connectDB = require('./src/config/db');
 const dotenv = require('dotenv');
 const userRoutes = require('./src/routes/users.routes')
+const productRoutes = require('./src/routes/products.routes')
+// const seedProducts = require('./src/seed/seedProducts');
 dotenv.config();
 
 const app = express();
@@ -9,6 +11,13 @@ const app = express();
 app.use(express.json());
 
 app.use('/user', userRoutes);
+app.use('/product', productRoutes);
+
+// Trigger seeding from route (for dev only)
+// app.get('/seed-products', async (req, res) => {
+//     await seedProducts();
+//     res.send('Products seeded');
+// });
 
 app.get('/', (req, res) => {
     res.send('Server is running');

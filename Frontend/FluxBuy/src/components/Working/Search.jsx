@@ -1,12 +1,36 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import axios from 'axios';
-// Define interfaces for better type safety
+import axios from 'axios';
+import Cards from './Cards';
 
 const Search = () => {
   const navigate = useNavigate();
-  const loading = false;
-  const isFilterOpen = false;
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState([]);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/product/allProducts`);
+        setProducts(response.data);
+      } catch (err) {
+        console.error('Error fetching categories:', err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   return (
     <div className="min-h-screen">
@@ -88,47 +112,49 @@ const Search = () => {
             {
               loading ?
                 <>
-                  {/* <div className="flex flex-wrap gap-6 justify-center">
-                                        {Array(5).fill(null).map((_, index) => (
-                                            <div
-                                                key={index}
-                                                className={`bg-gray-300 animate-pulse rounded-xl overflow-hidden shadow-lg 
-          ${isDesktop ? "w-[770px] h-[190px] flex -ml-[10rem]" : "w-full max-w-sm flex flex-col h-auto"}`}
-                                            >
-                                                <div className={`${isDesktop ? "w-1/3 h-auto" : "w-full h-[200px]"} bg-gray-400 animate-pulse`} />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+                    {Array(6).fill(null).map((_, index) => (
+                      <div
+                        key={index}
+                        className="bg-white rounded-xl overflow-hidden shadow-lg w-[90%] animate-pulse"
+                      >
+                        {/* Heart Icon Placeholder */}
+                        <div className="relative">
+                          <div className="flex justify-center items-center h-[200px] bg-white">
+                            <div className="p-[2rem] bg-gray-200 h-[180px] w-[14rem] rounded" />
+                          </div>
 
-                                                <div className={`${isDesktop ? "w-2/3 p-4 space-y-3" : "w-full p-4 space-y-3"}`}>
-                                                    <div className="w-32 h-4 bg-gray-400 rounded" />
-                                                    <div className={`${isDesktop ? "w-[25rem] h-10" : "w-full h-10"} bg-gray-500 rounded`} /> 
-                                                    <div className="flex flex-wrap gap-2">
-                                                        {Array(4).fill(null).map((_, i) => (
-                                                            <div key={i} className="w-20 mt-5 h-10 bg-gray-400 rounded-2xl" />
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div> */}
+                        </div>
+
+                        {/* Text and Ratings */}
+                        <div className="p-4 space-y-3">
+                          {/* Title */}
+                          <div className="w-3/4 h-4 bg-gray-300 rounded" />
+
+                          {/* Price */}
+                          <div className="w-1/4 h-4 bg-red-300 rounded" />
+
+                          {/* Rating stars and number */}
+                          <div className="flex items-center space-x-2">
+                            <div className="flex gap-1">
+                              {Array(5).fill(null).map((_, i) => (
+                                <div key={i} className="w-4 h-4 bg-gray-300 rounded" />
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </> :
                 <>
-                  {/* <div className="p-4 sm:p-6 lg:p-8">
-                                        <div className="grid grid-cols-1 gap-6">
-                                            {courseData.map((item) => (
-                                                <div
-                                                    key={item.course_id}
-                                                    onClick={() => navigate(`/course/${item.course_id}`)}
-                                                    className="cursor-pointer"
-                                                >
-                                                    <CardDisplay
-                                                        image={item.course_thumbnail}
-                                                        creation={item.creation}
-                                                        title={item.course_title}
-                                                        tags={item.course_keywords}
-                                                    />
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div> */}
+                  <div className="p-4 sm:p-6 lg:p-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {products.map((item) => (
+                        <Cards key={item._id} {...item} />
+                      ))}
+                    </div>
+                  </div>
                 </>
             }
 
@@ -138,13 +164,14 @@ const Search = () => {
 
       {/* Mobile Filter Slide-over */}
       <div
-        className={`fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity lg:hidden ${isFilterOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        className={`fixed inset - 0 bg - gray - 500 bg - opacity - 75 transition - opacity lg:hidden ${isFilterOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
-
+        onClick={() => setIsFilterOpen(false)}
       >
         <div
-          className={`fixed inset-y-0 left-0 max-w-xs w-full bg-[#161a1d] shadow-xl transform transition-transform ease-in-out duration-300 ${isFilterOpen ? 'translate-x-0' : '-translate-x-full'
+          className={`fixed inset-y-0 left-0 max-w-xs w-full bg-[#161a1d] shadow-xl transform transition-transform ease-in-out duration-100 ${isFilterOpen ? 'translate-x-0' : '-translate-x-full'
             }`}
+          onClick={(e) => e.stopPropagation()}
         >
           <div className="h-full flex flex-col">
             {/* Mobile Filter Header */}
@@ -152,6 +179,7 @@ const Search = () => {
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-medium text-white">Filters</h2>
                 <button
+                  onClick={() => setIsFilterOpen(false)}
                   className="text-white hover:text-gray-200 transition-colors"
                 >
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

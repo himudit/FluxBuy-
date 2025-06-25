@@ -5,12 +5,14 @@ import { AiFillStar } from 'react-icons/ai';
 const Cards = ({ discountPercentage, title, price, originalPrice, rating, thumbnail }) => {
   return (
     <div className="lg:w-[250px] w-full h-[22rem] bg-white p-4 rounded shadow relative">
-      <div className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
+      {/* <div className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
         {discountPercentage}
-      </div>
+      </div> */}
       <div className="absolute top-2 right-2 flex gap-2">
-        <FaHeart className="text-gray-400 hover:text-red-500 cursor-pointer" />
-        <FaEye className="text-gray-400 hover:text-black cursor-pointer" />
+        {/* <FaHeart className="text-gray-400 border border-white hover:text-red-500 cursor-pointer" /> */}
+
+        <FaHeart className="text-gray-400 bg-gray-100 rounded-full p-1 w-6 h-6 shadow-sm hover:text-red-500 cursor-pointer" />
+        {/* <FaEye className="text-gray-400 hover:text-black cursor-pointer" /> */}
       </div>
 
       <div className="h-52 bg-gray-200 my-4 rounded-md flex flex-col items-center justify-center">

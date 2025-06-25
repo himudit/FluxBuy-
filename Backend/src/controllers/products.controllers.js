@@ -1,8 +1,20 @@
 const Products = require('../models/product.model');
 
-const getAllProducts = async (req, res, next) => {
+const getSaleProducts = async (req, res, next) => {
     try {
         const products = await Products.find().limit(4);
+        res.status(200).json(products);
+    } catch (err) {
+        res.status(404).json({
+            message: "Error fetching products"
+        })
+        console.log(err);
+    }
+}
+
+const getAllProducts = async (req, res, next) => {
+    try {
+        const products = await Products.find();
         res.status(200).json(products);
     } catch (err) {
         res.status(404).json({
@@ -29,4 +41,4 @@ const getCategory = async (req, res, next) => {
 }
 
 
-module.exports = { getAllProducts, getCategory }
+module.exports = { getAllProducts, getCategory, getSaleProducts }

@@ -3,49 +3,13 @@ import Cards from './Cards';
 
 import axios from 'axios';
 
-const productData = [
-    {
-        id: 1,
-        discount: '-40%',
-        title: 'HAVIT HV-G92 Gamepad',
-        price: '$120',
-        originalPrice: '$160',
-        rating: 88,
-    },
-    {
-        id: 2,
-        discount: '-35%',
-        title: 'AK-900 Wired Keyboard',
-        price: '$960',
-        originalPrice: '$1160',
-        rating: 75,
-    },
-    {
-        id: 3,
-        discount: '-30%',
-        title: 'IPS LCD Gaming Monitor',
-        price: '$370',
-        originalPrice: '$400',
-        rating: 99,
-    },
-    {
-        id: 4,
-        discount: '-25%',
-        title: 'S-Series Comfort Chair',
-        price: '$375',
-        originalPrice: '$400',
-        rating: 99,
-    },
-
-];
-
 const TodaySales = () => {
     const [productData, setProductData] = useState([]);
 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/product/allProducts`);
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/product/saleProducts`);
                 console.log(response.data);
                 setProductData(response.data);
             } catch (err) {

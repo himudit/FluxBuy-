@@ -1,13 +1,18 @@
+import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Cards from './Cards';
 
 const Search = () => {
+
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
+  const pageParam = parseInt(searchParams.get("page")) || 1;
+
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
 
   useEffect(() => {
@@ -21,7 +26,7 @@ const Search = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/product/allProducts`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/product/allProducts?page=${pageParam}`);
         setProducts(response.data);
       } catch (err) {
         console.error('Error fetching categories:', err.message);
@@ -30,10 +35,33 @@ const Search = () => {
       }
     };
     fetchCategories();
-  }, []);
+  }, [pageParam]);
+
+  const handlePageChange = () => {
+    setSearchParams({ page: 3 });
+  };
 
   return (
     <div className="min-h-screen">
+      <div className="flex justify-center mb-8 space-x-4">
+        <button
+          onClick={() => handlePageChange(pageParam - 1)}
+          disabled={pageParam <= 1}
+          className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+
+        <span className="text-white">Page {pageParam}</span>
+
+        <button
+          onClick={() => handlePageChange(pageParam + 1)}
+          className="px-4 py-2 bg-gray-200 rounded"
+        >
+          Next
+        </button>
+      </div>
+
       <div className="max-w-7xl mx-auto">
         <div className="flex">
           {/* Desktop Left Sidebar Filters */}
@@ -113,7 +141,7 @@ const Search = () => {
               loading ?
                 <>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-                    {Array(6).fill(null).map((_, index) => (
+                    {Array(12).fill(null).map((_, index) => (
                       <div
                         key={index}
                         className="bg-white rounded-xl overflow-hidden shadow-lg w-[90%] animate-pulse"

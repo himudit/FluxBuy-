@@ -14,7 +14,11 @@ const getSaleProducts = async (req, res, next) => {
 
 const getAllProducts = async (req, res, next) => {
     try {
-        const products = await Products.find();
+        const limitNo = 12;
+        const page = parseInt(req.query.page) || 1;
+        // const page = 2;
+        const products = await Products.find().skip(limitNo * (page - 1))
+            .limit(limitNo);
         res.status(200).json(products);
     } catch (err) {
         res.status(404).json({

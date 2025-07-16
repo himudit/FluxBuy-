@@ -12,6 +12,35 @@ const getSaleProducts = async (req, res, next) => {
     }
 }
 
+
+const getProductById = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const apiId = Number(id);
+
+        if (isNaN(apiId)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid product ID',
+            });
+        }
+
+        const product = await Products.findOne({ apiId: apiId });
+        res.status(200).json({
+            success: true,
+            message: "Product found",
+            data: product
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: err.message
+        });
+    }
+}
+
+
 const getAllProducts = async (req, res, next) => {
     try {
         const limitNo = 12;
@@ -45,4 +74,4 @@ const getCategory = async (req, res, next) => {
 }
 
 
-module.exports = { getAllProducts, getCategory, getSaleProducts }
+module.exports = { getAllProducts, getCategory, getSaleProducts, getProductById }

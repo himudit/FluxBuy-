@@ -1,57 +1,18 @@
-// import React from 'react';
-// import { FaHeart } from 'react-icons/fa';
-// import { AiFillStar } from 'react-icons/ai';
-
-// const Cards = ({ discountPercentage, title, price, originalPrice, rating, thumbnail }) => {
-//   return (
-//     <div className="group relative lg:w-[250px] w-full h-[21rem] bg-white p-4 rounded shadow overflow-visible">
-//       <div className="absolute top-2 right-2 flex gap-2 z-20">
-//         <FaHeart className="text-gray-400 bg-gray-100 rounded-full p-1 w-6 h-6 shadow-sm hover:text-red-500 cursor-pointer" />
-//       </div>
-
-//       {/* Container for the pop-out image */}
-//       <div className="relative h-52 my-4 rounded-md flex items-center justify-center">
-//         {/* Default inline image */}
-//         <img
-//           src={thumbnail}
-//           alt="Product"
-//           className="w-35 h-35 object-contain mb-2 transition-opacity duration-200 group-hover:opacity-0 z-0"
-//         />
-
-//         {/* Hovered image that pops out */}
-//         <div className="absolute top-[-20px] z-10 hidden group-hover:flex items-center justify-center w-[275px] h-[25rem]  bg-gray-300 rounded-md shadow-lg transition-transform duration-300 scale-0 group-hover:scale-100">
-//           <img src={thumbnail} alt="Product Hover" className="w-40 h-40 object-contain" />
-//         </div>
-//       </div>
-
-//       <h3 className="text-sm font-semibold">{title}</h3>
-//       <div className="flex items-center gap-2 my-1">
-//         <span className="text-red-500 font-semibold">${price}</span>
-//         <span className="text-gray-400 line-through">{originalPrice}</span>
-//       </div>
-
-//       <div className="flex items-center text-yellow-400 text-sm">
-//         {[...Array(5)].map((_, i) => (
-//           <AiFillStar key={i} />
-//         ))}
-//         <span className="text-gray-500 text-xs ml-1">({rating})</span>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Cards;
 import React from 'react';
 import { FaHeart } from 'react-icons/fa';
 import { AiFillStar } from 'react-icons/ai';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const Cards = ({ discountPercentage, title, price, originalPrice, rating, thumbnail }) => {
+const Cards = ({ apiId, discountPercentage, title, price, originalPrice, rating, thumbnail }) => {
+  const navigate = useNavigate()
   return (
-    <div className="group relative lg:w-[250px] w-full h-[21rem] bg-white p-4 rounded shadow overflow-visible">
+    <div className="group relative lg:w-[250px] w-full h-[21rem] bg-white p-4 rounded shadow overflow-visible" onClick={() => {
+      navigate(`/products/${apiId}`)
+    }}>
       <div className="absolute top-2 right-2 flex gap-2 z-20">
         <FaHeart className="text-gray-400 bg-gray-100 rounded-full p-1 w-6 h-6 shadow-sm hover:text-red-500 cursor-pointer" />
       </div>
-
+      {apiId}
       {/* Image container */}
       <div className="relative h-52 my-4 rounded-md flex items-center justify-center bg-gray-200">
         {/* Base image */}

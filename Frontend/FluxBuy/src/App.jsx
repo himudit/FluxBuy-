@@ -11,6 +11,7 @@ import Profile from './components/Working/Profile'
 import Layout from '../src/Layout'
 import Cart from './components/Working/Cart'
 import WishList from './components/Working/WishList'
+import ProductPage from './components/Working/ProductPage'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -25,6 +26,7 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/wishlist" element={<WishList />} />
         {/* <Route path="/teacher/signup" element={<TeacherSignup />} /> */}
+         <Route path="/products/:id" element={<ProductPage />} />
       </Route>
     )
   );

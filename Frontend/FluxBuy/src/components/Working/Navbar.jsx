@@ -1,15 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import React, { useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import { FaShoppingCart, FaRegHeart } from "react-icons/fa";
-import reacticon from '../../assets/react.svg'
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const toggleMenu = () => setIsOpen(!isOpen);
     const searchRef = useRef();
-    // const loading = false;
-    // const user = "Mudit"
-    // const query = "een"
     return (
         <nav className="relative bg-white text-black ">
             <>

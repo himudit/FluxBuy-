@@ -3,11 +3,10 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Cards from './Cards';
+import Pagination from "./PaginationBar";
 
 const Search = () => {
-
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
@@ -37,30 +36,12 @@ const Search = () => {
     fetchCategories();
   }, [pageParam]);
 
-  const handlePageChange = () => {
-    setSearchParams({ page: 3 });
+  const handlePageChange = (arg) => {
+    setSearchParams({ page: arg });
   };
 
   return (
     <div className="min-h-screen">
-      <div className="flex justify-center mb-8 space-x-4">
-        <button
-          onClick={() => handlePageChange(pageParam - 1)}
-          disabled={pageParam <= 1}
-          className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-        >
-          Previous
-        </button>
-
-        <span className="text-white">Page {pageParam}</span>
-
-        <button
-          onClick={() => handlePageChange(pageParam + 1)}
-          className="px-4 py-2 bg-gray-200 rounded"
-        >
-          Next
-        </button>
-      </div>
 
       <div className="max-w-7xl mx-auto">
         <div className="flex">
@@ -120,7 +101,24 @@ const Search = () => {
           </div>
 
           {/* Main Content Area */}
-          <div className="flex-1">
+          <div className="flex-1 ">
+            {/* <div className="flex -ml-2 justify-center mt-2 mb-5 gap-10">
+              <button
+                onClick={() => handlePageChange(pageParam - 1)}
+                disabled={pageParam <= 1}
+                className="px-4 py-2 bg-gray-200 cursor-pointer rounded disabled:opacity-50"
+              >
+                Previous
+              </button>
+
+              <button
+                onClick={() => handlePageChange(pageParam + 1)}
+                className="px-4 py-2 cursor-pointer bg-gray-200 rounded"
+              >
+                Next
+              </button>
+            </div> */}
+            <Pagination />
             {/* Mobile Filter Button */}
             <div className="top-0 z-50 bg-[#161a1d] shadow-sm lg:hidden">
               <div className="px-4 py-4">

@@ -2,8 +2,16 @@ const Products = require('../models/product.model');
 
 const getSaleProducts = async (req, res, next) => {
     try {
-        const products = await Products.find().limit(4);
+        const keywords = ['laptops', 'footwear', 'watches', 'electronics'];
+
+        const productPromises = keywords.map(async (keyword) => {
+            return await Products.findOne({ tags: keyword });
+        });
+
+        const products = (await Promise.all(productPromises)).filter(Boolean);
+
         res.status(200).json(products);
+
     } catch (err) {
         res.status(404).json({
             message: "Error fetching products"

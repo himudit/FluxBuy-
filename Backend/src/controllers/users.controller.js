@@ -4,9 +4,10 @@ const { validationResult } = require('express-validator');
 
 const registerUser = async (req, res, next) => {
     try {
+        console.log(req.body)
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-
+            console.log(errors);
             return res.status(400).json({ errors: errors.array() });
         }
         const { first_name, last_name, email, password } = req.body;
@@ -23,8 +24,14 @@ const registerUser = async (req, res, next) => {
         });
         const savedUser = await newUser.save();
         const token = AuthService.generateAuthToken(newUser);
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: true,        // use only with HTTPS
+            sameSite: "Strict",  // or "Lax"
+            maxAge: 24 * 60 * 60 * 1000
+        });
         res.status(201).json({
-            msg: 'Registered Successfully', token
+            msg: 'Registered Successfully'
         });
     }
     catch (err) {
@@ -48,7 +55,12 @@ const loginUser = async (res, req) => {
             return res.status(401).json({ message: "Invalid email or password" });
         }
         const token = AuthService.generateAuthToken(user);
-        res.cookie('token', token);
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: true,        // use only with HTTPS
+            sameSite: "Strict",  // or "Lax"
+            maxAge: 24 * 60 * 60 * 1000
+        });
         res.status(200).json({ token, user });
     } catch (err) {
         console.log(err);

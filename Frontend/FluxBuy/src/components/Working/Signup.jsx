@@ -1,10 +1,59 @@
-import React from 'react';
-import shoppingImage from '../../assets/shopping.png'; // adjust if path differs
+import React, { useState } from 'react';
+import shoppingImage from '../../assets/shopping.png';
+import axios from 'axios';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+const signupSchema = z.object({
+  firstname: z.string().min(2, 'First name too short'),
+  lastname: z.string().min(2, 'Last name too short').optional().or(z.literal('')),
+  email: z.string()
+    .email('Invalid email')
+    .refine((val) => val.toLowerCase().endsWith('@gmail.com'), {
+      message: 'Only gmail.com emails are allowed',
+    }),
+  password: z.string()
+    .min(6, 'Password must be at least 6 characters')
+    .regex(/[0-9]/, 'Password must contain a number')
+    .regex(/[a-z]/i, 'Password must contain a letter'),
+});
+
 
 const Signup = () => {
+  const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset
+  } = useForm({
+    resolver: zodResolver(signupSchema)
+  });
+
+  const registerUser = async (data) => {
+    const sanitized = {
+      firstname: data.firstname.trim(),
+      lastname: data.lastname.trim(),
+      email: data.email.trim().toLowerCase(),
+      password: data.password
+    };
+
+    try {
+      setLoading(true);
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/register`, sanitized);
+      console.log('Signup success:', res.msg);
+      reset();
+    } catch (err) {
+      console.error('Signup failed:', err.response?.data || err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
-      {/* Left Image Section - Hidden on Mobile */}
+      {/* Left Image Section */}
       <div className="hidden md:flex md:w-1/2 items-center justify-center bg-[#d6eef7]">
         <img src={shoppingImage} alt="Shopping" className="max-w-md w-full px-4" />
       </div>
@@ -14,33 +63,62 @@ const Signup = () => {
         <h2 className="text-2xl font-semibold mb-2">Create an account</h2>
         <p className="mb-6 text-gray-600">Enter your details below</p>
 
-        <input
-          type="text"
-          placeholder="Name"
-          className="border-b border-gray-300 mb-4 outline-none py-2"
-        />
-        <input
-          type="email"
-          placeholder="Email or Phone Number"
-          className="border-b border-gray-300 mb-4 outline-none py-2"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          className="border-b border-gray-300 mb-6 outline-none py-2"
-        />
+        <form onSubmit={handleSubmit(registerUser)} className="space-y-4">
+          <div>
+            <input
+              type="text"
+              placeholder="First Name"
+              {...register('firstname')}
+              className="border-b border-gray-300 outline-none py-2 w-full"
+            />
+            {errors.firstname && <p className="text-red-500 text-sm">{errors.firstname.message}</p>}
+          </div>
 
-        <button className="bg-red-500 text-white py-2 rounded mb-4 hover:bg-red-600 transition">
-          Create Account
-        </button>
+          <div>
+            <input
+              type="text"
+              placeholder="Last Name"
+              {...register('lastname')}
+              className="border-b border-gray-300 outline-none py-2 w-full"
+            />
+            {/* {errors.lastname && <p className="text-red-500 text-sm">{errors.lastname.message}</p>} */}
+            {errors.lastname && (
+              <p className="text-red-500 text-sm">{errors.lastname.message}</p>
+            )}
 
-        <button className="border py-2 rounded flex items-center justify-center gap-2 hover:bg-gray-100 transition">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Google__G__Logo.svg" alt="Google" className="w-5 h-5" />
-          Sign up with Google
-        </button>
+          </div>
+
+          <div>
+            <input
+              type="email"
+              placeholder="Email"
+              {...register('email')}
+              className="border-b border-gray-300 outline-none py-2 w-full"
+            />
+            {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+          </div>
+
+          <div>
+            <input
+              type="password"
+              placeholder="Password"
+              {...register('password')}
+              className="border-b border-gray-300 outline-none py-2 w-full"
+            />
+            {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-red-500 text-white py-2 rounded hover:bg-red-600 transition w-full"
+          >
+            {loading ? 'Creating...' : 'Create Account'}
+          </button>
+        </form>
 
         <p className="text-sm text-center mt-6">
-          Already have account?{' '}
+          Already have an account?{' '}
           <a href="/login" className="text-blue-600 hover:underline">
             Log in
           </a>

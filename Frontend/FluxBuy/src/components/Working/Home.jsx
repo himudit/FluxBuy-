@@ -5,7 +5,6 @@ import TodaySales from './TodaySales'
 import BrowseCategory from './BrowseCategory'
 import ImageCorousel from './ImageCorousel'
 
-
 const Home = () => {
     return (
         <>

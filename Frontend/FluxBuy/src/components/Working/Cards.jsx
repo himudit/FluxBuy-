@@ -2,6 +2,7 @@ import React from 'react';
 import { FaHeart } from 'react-icons/fa';
 import { AiFillStar } from 'react-icons/ai';
 import { useNavigate, useParams } from 'react-router-dom';
+import StarRating from './StarRating';
 
 const Cards = ({ apiId, discountPercentage, title, price, originalPrice, rating, thumbnail }) => {
   const navigate = useNavigate()
@@ -12,7 +13,6 @@ const Cards = ({ apiId, discountPercentage, title, price, originalPrice, rating,
       <div className="absolute top-2 right-2 flex gap-2 z-20">
         <FaHeart className="text-gray-400 bg-gray-100 rounded-full p-1 w-6 h-6 shadow-sm hover:text-red-500 cursor-pointer" />
       </div>
-      {apiId}
       {/* Image container */}
       <div className="relative h-52 my-4 rounded-md flex items-center justify-center bg-gray-200">
         {/* Base image */}
@@ -30,16 +30,10 @@ const Cards = ({ apiId, discountPercentage, title, price, originalPrice, rating,
 
       <h3 className="text-sm font-semibold">{title}</h3>
       <div className="flex items-center gap-2 my-1">
-        <span className="text-red-500 font-semibold">${price}</span>
+        <span className="text-red-500 font-semibold">$ {price}</span>
         <span className="text-gray-400 line-through">{originalPrice}</span>
       </div>
-
-      <div className="flex items-center text-yellow-400 text-sm">
-        {[...Array(5)].map((_, i) => (
-          <AiFillStar key={i} />
-        ))}
-        <span className="text-gray-500 text-xs ml-1">({rating})</span>
-      </div>
+      <StarRating rating={rating} />
     </div>
   );
 };

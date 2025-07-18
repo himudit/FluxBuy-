@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Cards from './Cards';
+import { useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
 
 const TodaySales = () => {
     const [productData, setProductData] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -54,7 +56,9 @@ const TodaySales = () => {
             </div>
 
             <div className="flex justify-center mt-10">
-                <button className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-2 rounded">
+                <button className="bg-red-500 cursor-pointer hover:bg-red-600 text-white font-semibold px-6 py-2 rounded" onClick={() => {
+                    navigate('/search')
+                }}>
                     View All Products
                 </button>
             </div>

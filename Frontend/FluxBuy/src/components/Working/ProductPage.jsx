@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import ReviewCard from './ReviewCard';
 import ReviewSection from './ReviewSection';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../../features/cart/cartSlice';
 
 function ImageGallery({ image }) {
   const [selectedImage, setSelectedImage] = useState(0);
@@ -39,6 +41,7 @@ const ProductPage = () => {
   const { id } = useParams();
   const [product, setProduct] = useState({});
   const [image, setImage] = useState([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const f1 = async () => {
@@ -48,6 +51,15 @@ const ProductPage = () => {
     };
     f1();
   }, []);
+
+  const handleAddToCart = () => {
+    dispatch(addToCart({
+      id: product.apiId,
+      title: product.title,
+      price: product.price,
+      image: product.thumbnail
+    }));
+  };
 
   useEffect(() => {
     if (product?.images) {
@@ -90,7 +102,7 @@ const ProductPage = () => {
             <button className="w-full bg-black text-white py-2 rounded-md text-sm font-semibold">
               Buy this Item
             </button>
-            <button className="w-full border border-gray-300 text-black py-2 rounded-md text-sm font-semibold">
+            <button className="w-full border border-gray-300 text-black py-2 rounded-md text-sm font-semibold cursor-pointer" onClick={handleAddToCart}>
               Add to Cart
             </button>
           </div>

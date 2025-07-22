@@ -16,7 +16,7 @@ const Pagination = ({ totalPages = 6 }) => {
     };
 
     return (
-        <div className="bg-white rounded-full px-4 py-2 flex justify-center items-center space-x-2 shadow-md w-[25rem] mx-auto">
+        <div className="bg-white rounded-full px-4 py-2 flex justify-center items-center space-x-2 shadow-md w-[25rem] mx-auto mt-4 mb-3">
             <button
                 onClick={handlePrev}
                 className="text-gray-600 font-bold text-sm cursor-pointer disabled:opacity-30"

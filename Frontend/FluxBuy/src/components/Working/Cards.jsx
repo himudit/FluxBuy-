@@ -7,7 +7,7 @@ import StarRating from './StarRating';
 const Cards = ({ apiId, discountPercentage, title, price, originalPrice, rating, thumbnail }) => {
   const navigate = useNavigate()
   return (
-    <div className="group relative lg:w-[250px] w-full h-[21rem] bg-white p-4 rounded shadow overflow-visible" onClick={() => {
+    <div className="group relative lg:w-[250px] w-full h-[21rem] bg-white p-4 rounded shadow overflow-visible cursor-pointer" onClick={() => {
       navigate(`/products/${apiId}`)
     }}>
       <div className="absolute top-2 right-2 flex gap-2 z-20">

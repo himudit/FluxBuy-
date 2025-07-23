@@ -2,6 +2,8 @@ const Products = require('../models/product.model');
 
 const getSaleProducts = async (req, res, next) => {
     try {
+        const token = req.cookies.token;
+        console.log(token);
         const keywords = ['laptops', 'footwear', 'watches', 'electronics'];
 
         const productPromises = keywords.map(async (keyword) => {
@@ -67,6 +69,8 @@ const getAllProducts = async (req, res, next) => {
 
 const getCategory = async (req, res, next) => {
     try {
+        const token = req.cookies.token;
+        console.log(token);
         const categories = await Products.distinct('category');
         res.status(200).json({
             message: 'Categories fetched Successfully',

@@ -4,7 +4,6 @@ const { validationResult } = require('express-validator');
 
 const registerUser = async (req, res, next) => {
     try {
-        console.log(req.body)
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             console.log(errors);
@@ -24,10 +23,11 @@ const registerUser = async (req, res, next) => {
         });
         const savedUser = await newUser.save();
         const token = AuthService.generateAuthToken(newUser);
+        console.log(token);
         res.cookie('token', token, {
             httpOnly: true,
-            secure: true,        // use only with HTTPS
-            sameSite: "Strict",  // or "Lax"
+            secure: false,        // use only with HTTPS
+            sameSite: "Lax",  // or "Lax"
             maxAge: 24 * 60 * 60 * 1000
         });
         res.status(201).json({

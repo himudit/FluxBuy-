@@ -33,8 +33,8 @@ const Signup = () => {
 
   const registerUser = async (data) => {
     const sanitized = {
-      firstname: data.firstname.trim(),
-      lastname: data.lastname.trim(),
+      first_name: data.firstname.trim(),
+      last_name: data.lastname.trim(),
       email: data.email.trim().toLowerCase(),
       password: data.password
     };
@@ -42,7 +42,7 @@ const Signup = () => {
     try {
       setLoading(true);
       const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/register`, sanitized);
-      console.log('Signup success:', res.msg);
+      console.log('Signup success:', res);
       reset();
     } catch (err) {
       console.error('Signup failed:', err.response?.data || err.message);

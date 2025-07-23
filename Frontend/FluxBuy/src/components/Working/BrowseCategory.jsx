@@ -9,7 +9,9 @@ const BrowseCategory = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/product/category`);
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/product/category`, {
+                    withCredentials: true // 🔥 VERY IMPORTANT
+                });
                 // console.log(response);
                 setCategories(response.data.data);
             } catch (err) {

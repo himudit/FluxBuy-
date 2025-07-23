@@ -3,24 +3,29 @@ const connectDB = require('./src/config/db');
 const dotenv = require('dotenv');
 const userRoutes = require('./src/routes/users.routes')
 const productRoutes = require('./src/routes/products.routes')
+const cartRoutes = require('./src/routes/carts.routes')
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
-// const seedProducts = require('./src/seed/seedProducts');
 dotenv.config();
 
 const app = express();
 
 const corsOptions = {
     origin: 'http://localhost:5173',
-    // credential: true
+    credentials: true
 }
 
-app.use(cors(corsOptions))
+app.use(cors(corsOptions));
+
+
+app.use(cookieParser());
 
 app.use(express.json());
 
 app.use('/user', userRoutes);
 app.use('/product', productRoutes);
+app.use('/cart', cartRoutes);
 
 // Trigger seeding from route (for dev only)
 // app.get('/seed-products', async (req, res) => {

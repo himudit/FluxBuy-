@@ -11,7 +11,9 @@ const TodaySales = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/product/saleProducts`);
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/product/saleProducts`, {
+                    withCredentials: true // 🔥 VERY IMPORTANT
+                });
                 console.log(response.data);
                 setProductData(response.data);
             } catch (err) {
@@ -21,6 +23,8 @@ const TodaySales = () => {
 
         fetchCategories();
     }, []);
+
+    
     return (
         <section className="p-6 sm:ml-13">
             <div className="flex flex-wrap items-center gap-2 text-red-500 text-sm font-semibold mb-2">

@@ -5,6 +5,7 @@ import ReviewCard from './ReviewCard';
 import ReviewSection from './ReviewSection';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../../features/cart/cartSlice';
+import { useSelector } from 'react-redux';
 
 function ImageGallery({ image }) {
   const [selectedImage, setSelectedImage] = useState(0);
@@ -42,17 +43,42 @@ const ProductPage = () => {
   const [product, setProduct] = useState({});
   const [image, setImage] = useState([]);
   const dispatch = useDispatch();
+  const userInfo = useSelector((state) => state.user.userInfo);
+  // console.log(userInfo);
+
 
   useEffect(() => {
     const f1 = async () => {
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/product/${id}`);
-      console.log(response.data.data);
+      // console.log(response.data.data);
+      console.log(userInfo);
       setProduct(response.data.data);
     };
     f1();
   }, []);
 
   const handleAddToCart = () => {
+    const fetchCategories = async () => {
+      try {
+        console.log("rbur");
+        const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/cart/cart`, {
+          userId: userInfo._id,
+          productApiId: product.apiId,
+          title: product.title,
+          quantity: 1,
+          color: 'green',
+          size: 'XL',
+          image: product.thumbnail,
+          price: product.price,
+          discount: product.discount,
+        });
+        console.log(response);
+        // setCategories(response.data.data);
+      } catch (err) {
+        console.error('Error fetching categories:', err.message);
+      }
+    };
+    fetchCategories();
     dispatch(addToCart({
       id: product.apiId,
       title: product.title,

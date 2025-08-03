@@ -23,15 +23,9 @@ const registerUser = async (req, res, next) => {
         });
         const savedUser = await newUser.save();
         const token = AuthService.generateAuthToken(newUser);
-        console.log(token);
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: false,        // use only with HTTPS
-            sameSite: "Lax",  // or "Lax"
-            maxAge: 24 * 60 * 60 * 1000
-        });
-        res.status(201).json({
-            msg: 'Registered Successfully'
+        res.status(200).json({
+            message: 'Login successful',
+            token, // send token in response body
         });
     }
     catch (err) {

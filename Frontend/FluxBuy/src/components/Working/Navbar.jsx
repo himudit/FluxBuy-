@@ -1,11 +1,26 @@
 import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { FaShoppingCart, FaRegHeart } from "react-icons/fa";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../../features/user/userSlice"
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const { userInfo, isLoggedIn } = useSelector((state) => state.user);
+
+    const handleLogout = () => {
+        localStorage.removeItem("authToken");
+        dispatch(logout());
+        navigate("/login");
+    };
+
     const [isOpen, setIsOpen] = useState(false);
     const toggleMenu = () => setIsOpen(!isOpen);
     const searchRef = useRef();
+
     return (
         <nav className="relative bg-white text-black ">
             <>
@@ -89,20 +104,41 @@ const Navbar = () => {
                         </div>
                         <div className="hidden md:flex items-center">
                             {/* Desktop Navigation */}
-                            <ul className="flex items-center gap-8">
-                                <li>
-                                    <Link to="/wishlist" className=" text-2xl font-medium hover:text-purple-400 transition-colors">
-                                        <FaRegHeart />
-                                    </Link>
-                                </li>
+                            {isLoggedIn ? (
+                                <>
+                                    <ul className="flex items-center gap-12 ">
+                                        <li>
+                                            <Link to="/wishlist" className=" text-2xl font-medium hover:text-purple-400 transition-colors">
+                                                <FaRegHeart />
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link to="/cart" className="text-2xl font-medium hover:text-purple-400 transition-colors">
+                                                <FaShoppingCart />
+                                            </Link>
+                                        </li>
 
-                                <li>
-                                    <Link to="/cart" className="text-2xl font-medium hover:text-purple-400 transition-colors">
-                                        <FaShoppingCart />
-                                    </Link>
-                                </li>
-
-                            </ul>
+                                    </ul>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="flex items-center space-x-2">
+                                        <Link
+                                            to="/login"
+                                            className="text-gray-500 transition duration-300"
+                                        >
+                                            Login
+                                        </Link>
+                                        <span className="text-gray-400">or</span>
+                                        <Link
+                                            to="/signup"
+                                            className="text-gray-500 transition duration-300"
+                                        >
+                                            Signup
+                                        </Link>
+                                    </div>
+                                </>
+                            )}
                         </div>
 
 
@@ -114,43 +150,49 @@ const Navbar = () => {
                         </div>
 
                         {/* Right Section */}
-                        <div className="flex items-center gap-4">
-                            {/* Profile Section */}
+                        {/* <div className="flex items-center gap-4">
                             <div className="flex items-center gap-3">
-                                {/* Notifications */}
+                                <div className="relative group">
+                                    {isLoggedIn ? (
+                                        <>
+                                            {userInfo.user}
+                                            <div className="hidden md:flex items-center">
+                                                <ul className="flex items-center gap-8">
+                                                    <li>
+                                                        <Link to="/wishlist" className=" text-2xl font-medium hover:text-purple-400 transition-colors">
+                                                            <FaRegHeart />
+                                                        </Link>
+                                                    </li>
 
-                                {/* Profile Picture */}
-                                {/* <div className="relative group">
-                                {loading ? (
-                                    <></>
-                                ) : user?.student_profile_picture ? (
-                                    <img
-                                        src={user?.student_profile_picture}
-                                        alt="Profile"
-                                        className="w-12 h-12 rounded-full border-2 border-purple-500 cursor-pointer"
-                                        onClick={() => {
-                                            navigate('/profile');
-                                        }} />
-                                ) : (
-                                    <div className="flex items-center space-x-2">
-                                        <Link
-                                            to="/login"
-                                            className="text-gray-500 hover:text-white transition duration-300"
-                                        >
-                                            Login
-                                        </Link>
-                                        <span className="text-gray-400">or</span>
-                                        <Link
-                                            to="/signup"
-                                            className="text-gray-500 hover:text-white transition duration-300"
-                                        >
-                                            Signup
-                                        </Link>
-                                    </div>
-                                )}
-                            </div> */}
+                                                    <li>
+                                                        <Link to="/cart" className="text-2xl font-medium hover:text-purple-400 transition-colors">
+                                                            <FaShoppingCart />
+                                                        </Link>
+                                                    </li>
+
+                                                </ul>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div className="flex items-center space-x-2">
+                                            <Link
+                                                to="/login"
+                                                className="text-gray-500 hover:text-white transition duration-300"
+                                            >
+                                                Login
+                                            </Link>
+                                            <span className="text-gray-400">or</span>
+                                            <Link
+                                                to="/signup"
+                                                className="text-gray-500 hover:text-white transition duration-300"
+                                            >
+                                                Signup
+                                            </Link>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 

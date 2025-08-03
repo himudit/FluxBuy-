@@ -1,6 +1,6 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react'
+import { useDispatch } from "react-redux";
+import { fetchUserProfile } from "./features/user/userSlice"
 import './App.css'
 import Home from './components/Working/Home'
 import { createBrowserRouter, createRoutesFromElements, RouterProvider, Route } from 'react-router-dom'
@@ -14,6 +14,14 @@ import WishList from './components/Working/WishList'
 import ProductPage from './components/Working/ProductPage'
 
 function App() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      dispatch(fetchUserProfile(token));
+    }
+  }, [dispatch]);
+
   const [count, setCount] = useState(0)
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -26,7 +34,7 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/wishlist" element={<WishList />} />
         {/* <Route path="/teacher/signup" element={<TeacherSignup />} /> */}
-         <Route path="/products/:id" element={<ProductPage />} />
+        <Route path="/products/:id" element={<ProductPage />} />
       </Route>
     )
   );

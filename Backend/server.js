@@ -11,17 +11,26 @@ dotenv.config();
 
 const app = express();
 
-const corsOptions = {
-    origin: 'http://localhost:5173',
+// const corsOptions = {
+//     origin: 'http://localhost:5173',
+//     credentials: true
+// }
+
+// app.use(cors(corsOptions));
+
+app.use(cors({
+    origin: "http://localhost:5173", // frontend origin
     credentials: true
-}
-
-app.use(cors(corsOptions));
-
+}));
 
 app.use(cookieParser());
 
 app.use(express.json());
+
+app.get('/me', (req, res) => {
+    console.log("COOKIE:", req.cookies.token);
+    res.json({ message: "ok" });
+});
 
 app.use('/user', userRoutes);
 app.use('/product', productRoutes);

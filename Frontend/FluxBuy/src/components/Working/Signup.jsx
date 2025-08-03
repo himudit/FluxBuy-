@@ -4,6 +4,8 @@ import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from "react-redux";
 
 const signupSchema = z.object({
   firstname: z.string().min(2, 'First name too short'),
@@ -31,6 +33,9 @@ const Signup = () => {
     resolver: zodResolver(signupSchema)
   });
 
+
+  const navigate = useNavigate();
+
   const registerUser = async (data) => {
     const sanitized = {
       first_name: data.firstname.trim(),
@@ -42,7 +47,15 @@ const Signup = () => {
     try {
       setLoading(true);
       const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/register`, sanitized);
-      console.log('Signup success:', res);
+
+      const { token } = res.data;
+
+      localStorage.setItem("authToken", token);
+
+      dispatch(fetchUserProfile(token));
+
+      // navigate to dashboard
+      navigate("/");
       reset();
     } catch (err) {
       console.error('Signup failed:', err.response?.data || err.message);

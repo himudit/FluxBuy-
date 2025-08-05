@@ -11,7 +11,9 @@ const Search = () => {
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
   const pageParam = parseInt(searchParams.get("page")) || 1;
+  const filter = searchParams.get('filter') || '';
 
+  const [totalPages, setTotalPages] = useState(1);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
 
   useEffect(() => {
@@ -25,8 +27,9 @@ const Search = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/product/allProducts?page=${pageParam}`);
-        setProducts(response.data);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/product/allProducts?filter=${filter}&page=${pageParam}`);
+        setProducts(response.data.products);
+        setTotalPages(response.data.totalPages);
       } catch (err) {
         console.error('Error fetching categories:', err.message);
       } finally {
@@ -34,11 +37,16 @@ const Search = () => {
       }
     };
     fetchCategories();
-  }, [pageParam]);
+  }, [pageParam, filter]);
 
-  const handlePageChange = (arg) => {
-    setSearchParams({ page: arg });
+  const handlePageChange = (page) => {
+    setSearchParams((prevParams) => {
+      const newParams = new URLSearchParams(prevParams);
+      newParams.set("page", page);
+      return newParams;
+    });
   };
+
 
   return (
     <div className="min-h-screen">
@@ -102,23 +110,9 @@ const Search = () => {
 
           {/* Main Content Area */}
           <div className="flex-1 ">
-            {/* <div className="flex -ml-2 justify-center mt-2 mb-5 gap-10">
-              <button
-                onClick={() => handlePageChange(pageParam - 1)}
-                disabled={pageParam <= 1}
-                className="px-4 py-2 bg-gray-200 cursor-pointer rounded disabled:opacity-50"
-              >
-                Previous
-              </button>
+            {/* <Pagination /> */}
 
-              <button
-                onClick={() => handlePageChange(pageParam + 1)}
-                className="px-4 py-2 cursor-pointer bg-gray-200 rounded"
-              >
-                Next
-              </button>
-            </div> */}
-            <Pagination />
+
             {/* Mobile Filter Button */}
             <div className="top-0 z-50 bg-[#161a1d] shadow-sm lg:hidden">
               <div className="px-4 py-4">
@@ -185,6 +179,13 @@ const Search = () => {
             }
 
           </div>
+        </div>
+        <div className="md:ml-[5rem]">
+          <Pagination
+            currentPage={pageParam}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </div>
       </div>
 

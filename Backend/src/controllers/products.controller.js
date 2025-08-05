@@ -52,21 +52,52 @@ const getProductById = async (req, res, next) => {
 }
 
 
-const getAllProducts = async (req, res, next) => {
+// const getAllProducts = async (req, res, next) => {
+//     try {
+//         const limitNo = 12;
+//         const page = parseInt(req.query.page) || 1;
+//         // const page = 2;
+//         const products = await Products.find().skip(limitNo * (page - 1))
+//             .limit(limitNo);
+//         res.status(200).json(products);
+//     } catch (err) {
+//         res.status(404).json({
+//             message: "Error fetching products"
+//         })
+//         console.log(err);
+//     }
+// }
+const getAllProducts = async (req, res) => {
     try {
         const limitNo = 12;
         const page = parseInt(req.query.page) || 1;
-        // const page = 2;
-        const products = await Products.find().skip(limitNo * (page - 1))
+        const filter = req.query.filter;
+        const query = {};
+
+        if (filter) {
+            query.category = { $regex: filter, $options: 'i' }; // Case-insensitive match
+        }
+
+        const total = await Products.countDocuments(query);
+
+        const products = await Products.find(query)
+            .skip(limitNo * (page - 1))
             .limit(limitNo);
-        res.status(200).json(products);
+
+        res.status(200).json({
+            products,
+            currentPage: page,
+            totalPages: Math.ceil(total / limitNo),
+            totalResults: total,
+        });
     } catch (err) {
-        res.status(404).json({
-            message: "Error fetching products"
-        })
-        console.log(err);
+        console.error(err);
+        res.status(500).json({
+            message: 'Error fetching products',
+        });
     }
-}
+};
+
 
 const getCategory = async (req, res, next) => {
     try {

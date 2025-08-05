@@ -1,15 +1,42 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaShoppingCart, FaRegHeart } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../features/user/userSlice"
 import { useNavigate } from "react-router-dom";
+import CartIcon from "./CartIcon";
 
 const Navbar = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
     const { userInfo, isLoggedIn } = useSelector((state) => state.user);
+    const placeholderTexts = [
+        'Search electronics...',
+        'Find the best shoes...',
+        'Looking for books?',
+        'Discover gadgets...',
+        'Try "iPhone 15"...'
+    ];
+
+    const [placeholderIndex, setPlaceholderIndex] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setPlaceholderIndex((prevIndex) => (prevIndex + 1) % placeholderTexts.length);
+        }, 2500); // Change every 2.5 seconds
+
+        return () => clearInterval(interval); // Cleanup
+    }, []);
+
+    const [searchTerm, setSearchTerm] = useState('');
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const trimmed = searchTerm.trim();
+        if (trimmed) {
+            navigate(`/search?filter=${encodeURIComponent(trimmed)}`);
+            setSearchTerm('')
+        }
+    }
 
     const handleLogout = () => {
         localStorage.removeItem("authToken");
@@ -48,25 +75,32 @@ const Navbar = () => {
                         {/* Center Section - Search (Desktop Only) */}
                         <div className="hidden md:block flex-1 max-w-xl mx-auto px-4" ref={searchRef}>
                             <div className="relative">
-                                <input
-                                    type="text"
-                                    placeholder="what are you looking for.."
-                                    className="w-full px-4 py-2 rounded-[3rem] text-sm bg-gray-200 border border-gray-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all outline-none placeholder-gray-400"
-                                />
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-5 w-5 absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-900"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M21 21l-4.35-4.35M16.5 10a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
+
+                                <form onSubmit={handleSubmit} className="flex items-center">
+                                    <input
+                                        type="text"
+                                        placeholder={placeholderTexts[placeholderIndex]}
+                                        value={searchTerm}
+                                        onChange={(e) => {
+                                            setSearchTerm(e.target.value)
+                                        }}
+                                        className="w-full px-4 py-2 rounded-[3rem] text-sm bg-gray-200 border border-gray-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all outline-none placeholder-gray-400"
                                     />
-                                </svg>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-5 w-5 absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-900"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M21 21l-4.35-4.35M16.5 10a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
+                                        />
+                                    </svg>
+                                </form>
                             </div>
 
                             {/* Suggestions Dropdown */}
@@ -114,7 +148,8 @@ const Navbar = () => {
                                         </li>
                                         <li>
                                             <Link to="/cart" className="text-2xl font-medium hover:text-purple-400 transition-colors">
-                                                <FaShoppingCart />
+                                                {/* <FaShoppingCart /> */}
+                                                <CartIcon />
                                             </Link>
                                         </li>
 
@@ -226,23 +261,6 @@ const Navbar = () => {
                     {/* Sidebar Content */}
                     <div className="py-6">
                         {/* Profile Section in Sidebar */}
-                        {/* <div className="px-6 mb-6 flex items-center gap-3">
-                        {
-                            user ?
-                                <>
-                                    <img
-                                        src={user?.student_profile_picture}
-                                        alt="Profile"
-                                        className="w-[4rem] h-[4rem] rounded-full border-2 border-purple-500"
-                                    />
-                                    <div>
-                                        <h3 className="font-medium">{user?.first_name} {user?.last_name}</h3>
-                                        <p className="text-sm text-gray-400">{user?.email}</p>
-                                    </div>
-                                </> : <></>
-                        }
-                    </div> */}
-
                         <ul className="space-y-2">
                             <li>
                                 <Link
@@ -251,6 +269,11 @@ const Navbar = () => {
                                     className="flex text-2xl items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
                                 >
                                     <FaRegHeart />
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/cart" onClick={toggleMenu} className="flex text-2xl items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+                                    <CartIcon />
                                 </Link>
                             </li>
                             {/* <li>
@@ -325,28 +348,31 @@ const Navbar = () => {
             <div className="block md:hidden">
                 <div className="flex-1 max-w-xl mx-auto px-4">
                     <div className="relative">
-                        <input
-                            type="text"
-                            // value={query}
-                            // onChange={handleChange}
-                            // onKeyDown={handleKeyDown}
-                            placeholder="what are you looking for..."
-                            className="w-full h-[3rem] px-4 py-2 rounded-[3rem] text-lg bg-gray-200 border border-gray-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all outline-none placeholder-gray-400"
-                        />
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-7 w-7 absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-900"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M21 21l-4.35-4.35M16.5 10a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
+                        <form onSubmit={handleSubmit} className="flex items-center">
+                            <input
+                                type="text"
+                                placeholder={placeholderTexts[placeholderIndex]}
+                                value={searchTerm}
+                                onChange={(e) => {
+                                    setSearchTerm(e.target.value)
+                                }}
+                                className="w-full h-[3rem] px-4 py-2 rounded-[3rem] text-lg bg-gray-200 border border-gray-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all outline-none placeholder-gray-400"
                             />
-                        </svg>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-7 w-7 absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-900"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M21 21l-4.35-4.35M16.5 10a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
+                                />
+                            </svg>
+                        </form>
                     </div>
 
                     {/* {showSuggestions && filteredSuggestions.length > 0 && (

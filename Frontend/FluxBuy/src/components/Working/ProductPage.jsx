@@ -6,37 +6,44 @@ import ReviewSection from './ReviewSection';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../../features/cart/cartSlice';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import Zoom from 'react-medium-image-zoom';
+import 'react-medium-image-zoom/dist/styles.css';
 
 function ImageGallery({ image }) {
   const [selectedImage, setSelectedImage] = useState(0);
 
   return (
     <div className="flex flex-col md:flex-row gap-4">
-      {/* Left Image Thumbnails */}
+      {/* Thumbnails */}
       <div className="flex md:flex-col gap-2 md:w-20 w-full overflow-x-auto md:overflow-visible">
         {image.map((img, idx) => (
           <img
             key={idx}
             src={img}
             alt={`Thumb ${idx}`}
-            className={`w-20 h-20 object-contain rounded-md border  bg-gray-200 cursor-pointer ${selectedImage === idx ? 'border-black' : 'border-gray-300'
+            className={`w-20 h-20 object-contain rounded-md border bg-gray-200 cursor-pointer ${selectedImage === idx ? 'border-black' : 'border-gray-300'
               }`}
             onClick={() => setSelectedImage(idx)}
           />
         ))}
       </div>
 
-      {/* Main Image */}
-      <div className="flex-1 min-w-0">
-        <img
-          src={image[selectedImage]}
-          alt="Selected Product"
-          className="w-[30rem] max-h-[400px] aspect-square rounded-lg border object-contain bg-gray-200 border-gray-100"
-        />
+      {/* Main Image with Zoom on Click */}
+      <div className="flex-1 min-w-0 max-w-[30rem]">
+        <Zoom>
+          <img
+            src={image[selectedImage]}
+            alt="Selected Product"
+            className="rounded-lg border border-gray-200 object-contain w-full h-auto bg-gray-100 max-h-[400px]"
+          />
+        </Zoom>
       </div>
     </div>
   );
 }
+
+
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -44,23 +51,26 @@ const ProductPage = () => {
   const [image, setImage] = useState([]);
   const dispatch = useDispatch();
   const userInfo = useSelector((state) => state.user.userInfo);
-  // console.log(userInfo);
+  const [isInCart, setIsInCart] = useState(false);
+  const cartItems = useSelector((state) => state.cart.cartItems)
 
 
   useEffect(() => {
     const f1 = async () => {
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/product/${id}`);
-      // console.log(response.data.data);
-      console.log(userInfo);
       setProduct(response.data.data);
     };
     f1();
   }, []);
 
+  useEffect(() => {
+    const found = cartItems.some((item) => item.id === product.apiId);
+    setIsInCart(found);
+  }, [cartItems, product.apiId]);
+
   const handleAddToCart = () => {
     const fetchCategories = async () => {
       try {
-        console.log("rbur");
         const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/cart/cart`, {
           userId: userInfo._id,
           productApiId: product.apiId,
@@ -72,8 +82,6 @@ const ProductPage = () => {
           price: product.price,
           discount: product.discount,
         });
-        console.log(response);
-        // setCategories(response.data.data);
       } catch (err) {
         console.error('Error fetching categories:', err.message);
       }
@@ -85,6 +93,7 @@ const ProductPage = () => {
       price: product.price,
       image: product.thumbnail
     }));
+    setIsInCart(true);
   };
 
   useEffect(() => {
@@ -92,6 +101,7 @@ const ProductPage = () => {
       setImage(product.images);
     }
   }, [product]);
+  const navigate = useNavigate();
 
   return (
     <div>
@@ -128,9 +138,26 @@ const ProductPage = () => {
             <button className="w-full bg-black text-white py-2 rounded-md text-sm font-semibold">
               Buy this Item
             </button>
-            <button className="w-full border border-gray-300 text-black py-2 rounded-md text-sm font-semibold cursor-pointer" onClick={handleAddToCart}>
+            {/* <button className="w-full border border-gray-300 text-black py-2 rounded-md text-sm font-semibold cursor-pointer" onClick={handleAddToCart}>
               Add to Cart
-            </button>
+            </button> */}
+            {
+              isInCart ? (
+                <button
+                  className="w-full bg-black text-white py-2 rounded-md text-sm font-semibold cursor-pointer"
+                  onClick={() => navigate('/cart')}
+                >
+                  Go to Cart
+                </button>
+              ) : (
+                <button
+                  className="w-full border border-gray-300 text-black py-2 rounded-md text-sm font-semibold cursor-pointer hover:bg-gray-100 transition"
+                  onClick={handleAddToCart}
+                >
+                  Add to Cart
+                </button>
+              )
+            }
           </div>
         </div>
       </div>

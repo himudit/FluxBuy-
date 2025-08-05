@@ -4,6 +4,8 @@ import Navbar from './Navbar'
 import TodaySales from './TodaySales'
 import BrowseCategory from './BrowseCategory'
 import ImageCorousel from './ImageCorousel'
+import Footer from './Footer'
+import ExploreBrand from './ExploreBrand'
 
 const Home = () => {
     return (
@@ -23,6 +25,12 @@ const Home = () => {
             </div>
             <div className='mt-20'>
                 <ImageCorousel />
+            </div>
+            <div className='mt-20'>
+                <ExploreBrand />
+            </div>
+            <div className='mt-20'>
+                <Footer />
             </div>
 
         </>

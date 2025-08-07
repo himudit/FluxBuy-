@@ -39,7 +39,7 @@ const userSlice = createSlice({
       state.error = null;
     },
   },
-  
+
   extraReducers: (builder) => {
     builder
       .addCase(fetchUserProfile.pending, (state) => {

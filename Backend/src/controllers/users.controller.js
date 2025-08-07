@@ -24,7 +24,7 @@ const registerUser = async (req, res, next) => {
         const savedUser = await newUser.save();
         const token = AuthService.generateAuthToken(newUser);
         res.status(200).json({
-            message: 'Login successful',
+            message: 'Successfully Regsitered',
             token, // send token in response body
         });
     }
@@ -49,13 +49,10 @@ const loginUser = async (res, req) => {
             return res.status(401).json({ message: "Invalid email or password" });
         }
         const token = AuthService.generateAuthToken(user);
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: true,        // use only with HTTPS
-            sameSite: "Strict",  // or "Lax"
-            maxAge: 24 * 60 * 60 * 1000
+        res.status(200).json({
+            message: 'Login successful',
+            token, // send token in response body
         });
-        res.status(200).json({ token, user });
     } catch (err) {
         console.log(err);
     }

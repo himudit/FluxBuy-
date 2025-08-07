@@ -7,6 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 
+import { fetchUserProfile } from "../../features/user/userSlice"
+
 const signupSchema = z.object({
   firstname: z.string().min(2, 'First name too short'),
   lastname: z.string().min(2, 'Last name too short').optional().or(z.literal('')),

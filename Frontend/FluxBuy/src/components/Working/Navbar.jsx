@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FaShoppingCart, FaRegHeart } from "react-icons/fa";
+import { FaShoppingCart, FaRegHeart, FaArrowRight } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../features/user/userSlice"
 import { useNavigate } from "react-router-dom";
@@ -39,6 +39,7 @@ const Navbar = () => {
     }
 
     const handleLogout = () => {
+        toggleMenu();
         localStorage.removeItem("authToken");
         dispatch(logout());
         navigate("/login");
@@ -102,58 +103,16 @@ const Navbar = () => {
                                     </svg>
                                 </form>
                             </div>
-
-                            {/* Suggestions Dropdown */}
-                            {/* {showSuggestions && filteredSuggestions.length > 0 && (
-                            <div className="absolute w-[45%] left-[38%] right-0 mt-2 bg-gray-800 text-white shadow-lg rounded-lg overflow-hidden z-10">
-                                <div className="p-2 font-semibold border-b border-gray-700">
-                                    Popular on Edusphere
-                                </div>
-                                {filteredSuggestions.map((suggestion, index) => (
-                                    <div
-                                        key={index}
-                                        className={`p-2 flex items-center gap-2 cursor-pointer ${index === activeIndex ? "bg-gray-700" : "hover:bg-gray-600"
-                                            }`}
-                                        onClick={() => handleSelect(suggestion)}
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className="h-4 w-4 text-gray-300"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="M21 21l-4.35-4.35M16.5 10a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
-                                            />
-                                        </svg>
-                                        <span>{suggestion}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        )} */}
                         </div>
                         <div className="hidden md:flex items-center">
                             {/* Desktop Navigation */}
                             {isLoggedIn ? (
                                 <>
-                                    <ul className="flex items-center gap-12 ">
-                                        <li>
-                                            <Link to="/wishlist" className=" text-2xl font-medium hover:text-purple-400 transition-colors">
-                                                <FaRegHeart />
-                                            </Link>
-                                        </li>
-                                        <li>
-                                            <Link to="/cart" className="text-2xl font-medium hover:text-purple-400 transition-colors">
-                                                {/* <FaShoppingCart /> */}
-                                                <CartIcon />
-                                            </Link>
-                                        </li>
+                                    <Link to="/cart" className="text-2xl font-medium hover:text-purple-400 transition-colors">
+                                        {/* <FaShoppingCart /> */}
+                                        <CartIcon />
+                                    </Link>
 
-                                    </ul>
                                 </>
                             ) : (
                                 <>
@@ -184,50 +143,6 @@ const Navbar = () => {
                             </Link>
                         </div>
 
-                        {/* Right Section */}
-                        {/* <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-3">
-                                <div className="relative group">
-                                    {isLoggedIn ? (
-                                        <>
-                                            {userInfo.user}
-                                            <div className="hidden md:flex items-center">
-                                                <ul className="flex items-center gap-8">
-                                                    <li>
-                                                        <Link to="/wishlist" className=" text-2xl font-medium hover:text-purple-400 transition-colors">
-                                                            <FaRegHeart />
-                                                        </Link>
-                                                    </li>
-
-                                                    <li>
-                                                        <Link to="/cart" className="text-2xl font-medium hover:text-purple-400 transition-colors">
-                                                            <FaShoppingCart />
-                                                        </Link>
-                                                    </li>
-
-                                                </ul>
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <div className="flex items-center space-x-2">
-                                            <Link
-                                                to="/login"
-                                                className="text-gray-500 hover:text-white transition duration-300"
-                                            >
-                                                Login
-                                            </Link>
-                                            <span className="text-gray-400">or</span>
-                                            <Link
-                                                to="/signup"
-                                                className="text-gray-500 hover:text-white transition duration-300"
-                                            >
-                                                Signup
-                                            </Link>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div> */}
                     </div>
                 </div>
 
@@ -263,74 +178,21 @@ const Navbar = () => {
                         {/* Profile Section in Sidebar */}
                         <ul className="space-y-2">
                             <li>
-                                <Link
-                                    to="/wishlist"
-                                    onClick={toggleMenu}
-                                    className="flex text-2xl items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
-                                >
-                                    <FaRegHeart />
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/cart" onClick={toggleMenu} className="flex text-2xl items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+                                <Link to="/cart" onClick={toggleMenu} className="flex items-center ml-9 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
                                     <CartIcon />
                                 </Link>
                             </li>
-                            {/* <li>
-                            {
-                                user ?
-                                    <Link
-                                        to="/mylearning"
-                                        onClick={toggleMenu}
-                                        className="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
-                                    >
-                                        < svg
-                                            className="w-5 h-5 mr-3"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                                            />
-                                        </svg>
-                                        My Learning
-                                    </Link> :
-                                    <></>
-                            }
-                        </li> */}
-                            {/* <li>
-                            {user ?
-                                <>
-                                    <Link
-                                        onClick={toggleMenu}
-                                        to="/profile"
-                                        className="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
-                                    >
-                                        <svg
-                                            className="w-5 h-5 mr-3"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                                            />
-                                        </svg>
-                                        Profile
-                                    </Link>
-                                </>
-                                :
-                                <></>
-                            }
+                            {/* logout */}
+                            <li>
+                                <div onClick={handleLogout} className="flex items-center ml-9 py-3 text-black hover:bg-gray-800 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59z" />
+                                        <path d="M19 3H5c-1.1 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" />
+                                    </svg>
+                                </div>
 
-                        </li> */}
+                            </li>
+
                         </ul>
                     </div>
                 </div>
@@ -374,38 +236,6 @@ const Navbar = () => {
                             </svg>
                         </form>
                     </div>
-
-                    {/* {showSuggestions && filteredSuggestions.length > 0 && (
-                    <div className="absolute left-0 right-0 mt-2 bg-black shadow-lg rounded-lg overflow-hidden z-50">
-                        <div className="p-2 font-semibold text-gray-400 border-b border-gray-700">
-                            Popular on Edusphere
-                        </div>
-                        {filteredSuggestions.map((suggestion, index) => (
-                            <div
-                                key={index}
-                                className={`p-2 flex items-center gap-2 cursor-pointer ${index === activeIndex ? "bg-gray-700" : "hover:bg-gray-600"
-                                    }`}
-                                onClick={() => handleSelect(suggestion)}
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-4 w-4 text-gray-500"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M21 21l-4.35-4.35M16.5 10a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
-                                    />
-                                </svg>
-                                <span className="text-white">{suggestion}</span>
-                            </div>
-                        ))}
-                    </div>
-                )} */}
                 </div>
             </div>
 

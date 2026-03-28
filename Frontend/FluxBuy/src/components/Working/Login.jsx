@@ -1,48 +1,61 @@
 import React, { useState } from 'react';
 import shoppingImage from '../../assets/shopping.png';
-import axios from 'axios';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-
-const loginSchema = z.object({
-  email: z.string().email('Invalid email'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-});
+import { protecx } from '../../lib/protecx'
+import { ProtecXError } from "protecx-js/client";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(loginSchema),
+  const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [formData, setFormData] = useState({
+    email: "",
+    password: ""
   });
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const loginUser = async (data) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const loginUser = async (e) => {
+    e.preventDefault();
+    setError("");
+
     const credentials = {
-      email: data.email.trim().toLowerCase(),
-      password: data.password,
+      email: formData.email.trim().toLowerCase(),
+      password: formData.password,
     };
 
     try {
       setLoading(true);
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/login`, credentials);
-
-      const { token } = res.data;
-
-      localStorage.setItem('authToken', token);
-      dispatch(fetchUserProfile(token));
+      const session = await protecx.login(credentials);
+      console.log('Logged in successfully:', session);
       navigate('/');
-      
     } catch (err) {
-      console.error('Login failed:', err.response?.data || err.message);
+      if (err instanceof ProtecXError) {
+
+        if (err.isValidationError()) {
+          setFieldErrors(err.getAllFieldErrors());
+        }
+
+        if (err.isGlobalError()) {
+          const globalErr = err.getErrors();
+          setError(typeof globalErr === "string" ? globalErr : 'Invalid email or password');
+        }
+
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+        console.error(err);
+      }
+
     } finally {
       setLoading(false);
     }
@@ -60,25 +73,33 @@ const Login = () => {
         <h2 className="text-2xl font-semibold mb-2">Log in to Exclusive</h2>
         <p className="mb-6 text-gray-600">Enter your details below</p>
 
-        <form onSubmit={handleSubmit(loginUser)} className="space-y-4">
+        <form onSubmit={loginUser} className="space-y-4">
+          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+          {fieldErrors.email && <p className="text-red-500 text-sm">{fieldErrors.email}</p>}
+          {fieldErrors.password && <p className="text-red-500 text-sm">{fieldErrors.password}</p>}
+
           <div>
             <input
               type="email"
+              name="email"
               placeholder="Email"
-              {...register('email')}
+              value={formData.email}
+              onChange={handleInputChange}
               className="border-b border-gray-300 outline-none py-2 w-full"
+              required
             />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
           </div>
 
           <div>
             <input
               type="password"
+              name="password"
               placeholder="Password"
-              {...register('password')}
+              value={formData.password}
+              onChange={handleInputChange}
               className="border-b border-gray-300 outline-none py-2 w-full"
+              required
             />
-            {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
           </div>
 
           <div className="flex justify-between items-center">

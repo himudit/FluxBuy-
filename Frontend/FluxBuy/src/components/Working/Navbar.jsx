@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../features/user/userSlice"
 import { useNavigate } from "react-router-dom";
 import CartIcon from "./CartIcon";
+import { protecx } from "../../lib/protecx";
 
 const Navbar = () => {
     const dispatch = useDispatch();
@@ -38,8 +39,9 @@ const Navbar = () => {
         }
     }
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         toggleMenu();
+        await protecx.logout();
         localStorage.removeItem("authToken");
         dispatch(logout());
         navigate("/login");

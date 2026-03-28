@@ -1,66 +1,62 @@
 import React, { useState } from 'react';
 import shoppingImage from '../../assets/shopping.png';
-import axios from 'axios';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
-
+import { protecx } from "../../lib/protecx";
+import { ProtecXError } from "@protecx/js";
 import { fetchUserProfile } from "../../features/user/userSlice"
-
-const signupSchema = z.object({
-  firstname: z.string().min(2, 'First name too short'),
-  lastname: z.string().min(2, 'Last name too short').optional().or(z.literal('')),
-  email: z.string()
-    .email('Invalid email')
-    .refine((val) => val.toLowerCase().endsWith('@gmail.com'), {
-      message: 'Only gmail.com emails are allowed',
-    }),
-  password: z.string()
-    .min(6, 'Password must be at least 6 characters')
-    .regex(/[0-9]/, 'Password must contain a number')
-    .regex(/[a-z]/i, 'Password must contain a letter'),
-});
-
 
 const Signup = () => {
   const [loading, setLoading] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset
-  } = useForm({
-    resolver: zodResolver(signupSchema)
+  const [error, setError] = useState(null);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    password: ""
   });
 
-
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const registerUser = async (data) => {
-    const sanitized = {
-      first_name: data.firstname.trim(),
-      last_name: data.lastname.trim(),
-      email: data.email.trim().toLowerCase(),
-      password: data.password
-    };
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setFieldErrors({});
 
     try {
-      setLoading(true);
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/register`, sanitized);
+      const { user, session } = await protecx.signup({
+        email: formData.email,
+        password: formData.password,
+        name: formData.fullName
+      });
 
-      const { token } = res.data;
-
-      localStorage.setItem("authToken", token);
-
-      dispatch(fetchUserProfile(token));
-
-      // navigate to dashboard
+      console.log("Welcome!", user);
+      // Assuming protecx handles tokens, or you might need to dispatch profile fetch
+      // dispatch(fetchUserProfile(session.token)); 
       navigate("/");
-      reset();
     } catch (err) {
-      console.error('Signup failed:', err.response?.data || err.message);
+      if (err instanceof ProtecXError) {
+        if (err.isValidationError()) {
+          setFieldErrors(err.getAllFieldErrors());
+        }
+        if (err.isGlobalError()) {
+          const globalErr = err.getErrors();
+          setError(typeof globalErr === "string" ? globalErr : "Something went wrong");
+        }
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+        console.error(err);
+      }
     } finally {
       setLoading(false);
     }
@@ -78,49 +74,46 @@ const Signup = () => {
         <h2 className="text-2xl font-semibold mb-2">Create an account</h2>
         <p className="mb-6 text-gray-600">Enter your details below</p>
 
-        <form onSubmit={handleSubmit(registerUser)} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+          
           <div>
             <input
               type="text"
-              placeholder="First Name"
-              {...register('firstname')}
+              name="fullName"
+              placeholder="Full Name"
+              value={formData.fullName}
+              onChange={handleInputChange}
               className="border-b border-gray-300 outline-none py-2 w-full"
+              required
             />
-            {errors.firstname && <p className="text-red-500 text-sm">{errors.firstname.message}</p>}
-          </div>
-
-          <div>
-            <input
-              type="text"
-              placeholder="Last Name"
-              {...register('lastname')}
-              className="border-b border-gray-300 outline-none py-2 w-full"
-            />
-            {/* {errors.lastname && <p className="text-red-500 text-sm">{errors.lastname.message}</p>} */}
-            {errors.lastname && (
-              <p className="text-red-500 text-sm">{errors.lastname.message}</p>
-            )}
-
+            {fieldErrors.name && <p className="text-red-500 text-sm">{fieldErrors.name}</p>}
           </div>
 
           <div>
             <input
               type="email"
+              name="email"
               placeholder="Email"
-              {...register('email')}
+              value={formData.email}
+              onChange={handleInputChange}
               className="border-b border-gray-300 outline-none py-2 w-full"
+              required
             />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+            {fieldErrors.email && <p className="text-red-500 text-sm">{fieldErrors.email}</p>}
           </div>
 
           <div>
             <input
               type="password"
+              name="password"
               placeholder="Password"
-              {...register('password')}
+              value={formData.password}
+              onChange={handleInputChange}
               className="border-b border-gray-300 outline-none py-2 w-full"
+              required
             />
-            {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+            {fieldErrors.password && <p className="text-red-500 text-sm">{fieldErrors.password}</p>}
           </div>
 
           <button

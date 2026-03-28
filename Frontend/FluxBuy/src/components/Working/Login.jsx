@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import shoppingImage from '../../assets/shopping.png';
+import LoginImage from '/Login-bro.png';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { protecx } from '../../lib/protecx'
@@ -23,6 +24,10 @@ const Login = () => {
       ...prev,
       [name]: value
     }));
+    // Clear specific field error when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => ({ ...prev, [name]: "" }));
+    }
   };
 
   const loginUser = async (e) => {
@@ -62,66 +67,78 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row">
-      {/* Left Image Section */}
-      <div className="hidden md:flex md:w-1/2 items-center justify-center bg-[#d6eef7]">
-        <img src={shoppingImage} alt="Shopping" className="max-w-md w-full px-4" />
-      </div>
-
-      {/* Right Form Section */}
-      <div className="flex flex-col justify-center md:w-1/2 w-full px-8 py-12">
-        <h2 className="text-2xl font-semibold mb-2">Log in to Exclusive</h2>
-        <p className="mb-6 text-gray-600">Enter your details below</p>
-
-        <form onSubmit={loginUser} className="space-y-4">
-          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-          {fieldErrors.email && <p className="text-red-500 text-sm">{fieldErrors.email}</p>}
-          {fieldErrors.password && <p className="text-red-500 text-sm">{fieldErrors.password}</p>}
-
-          <div>
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className="border-b border-gray-300 outline-none py-2 w-full"
-              required
+    <div className="min-h-[calc(100vh-80px)] flex items-center justify-center p-4">
+      <div className="flex flex-col md:flex-row max-w-6xl w-full bg-white rounded-lg overflow-hidden md:shadow-none">
+        {/* Left Image Section */}
+        <div className="hidden md:flex md:w-1/2 items-center justify-center bg-[#f5f5f5] ">
+          <div className="w-full h-full flex items-center justify-center p-12">
+            <img
+              src={LoginImage}
+              alt="Shopping"
+              className="w-full h-full object-contain drop-shadow-sm select-none"
             />
           </div>
+        </div>
 
-          <div>
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleInputChange}
-              className="border-b border-gray-300 outline-none py-2 w-full"
-              required
-            />
-          </div>
+        {/* Right Form Section */} 
+        <div className="flex flex-col justify-center md:w-1/2 w-full px-8 md:px-16 py-12">
+          <h2 className="text-3xl font-semibold mb-2">Log in to Exclusive</h2>
+          <p className="mb-8 text-gray-600 font-medium">Enter your details below</p>
 
-          <div className="flex justify-between items-center">
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-red-500 text-white py-2 px-6 rounded hover:bg-red-600 transition"
-            >
-              {loading ? 'Logging in...' : 'Log In'}
-            </button>
-            <a href="#" className="text-sm text-red-500 hover:underline">
-              Forget Password?
+          <form onSubmit={loginUser} className="space-y-6">
+            {error && (
+              <div className="bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-md text-sm mb-4 animate-in fade-in slide-in-from-top-1">
+                {error}
+              </div>
+            )}
+
+            <div className="space-y-1">
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className={`border-b outline-none py-2 w-full transition-all duration-200 focus:border-red-500 ${fieldErrors.email ? 'border-red-500' : 'border-gray-300'}`}
+                required
+              />
+              {fieldErrors.email && <p className="text-red-500 text-xs font-medium animate-in fade-in">{fieldErrors.email}</p>}
+            </div>
+
+            <div className="space-y-1">
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleInputChange}
+                className={`border-b outline-none py-2 w-full transition-all duration-200 focus:border-red-500 ${fieldErrors.password ? 'border-red-500' : 'border-gray-300'}`}
+                required
+              />
+              {fieldErrors.password && <p className="text-red-500 text-xs font-medium animate-in fade-in">{fieldErrors.password}</p>}
+            </div>
+
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4">
+              <button
+                type="submit"
+                disabled={loading}
+                className="bg-red-500 text-white py-3 px-12 rounded hover:bg-red-600 transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed w-full sm:w-auto font-medium shadow-sm hover:shadow-md"
+              >
+                {loading ? 'Logging in...' : 'Log In'}
+              </button>
+              <a href="#" className="text-sm text-red-500 hover:text-red-700 font-medium transition-colors">
+                Forget Password?
+              </a>
+            </div>
+          </form>
+
+          <p className="text-sm text-center mt-12 text-gray-600">
+            Don't have an account?{' '}
+            <a href="/signup" className="text-red-500 font-semibold hover:underline hover:text-red-700 transition-colors ml-1">
+              Sign up
             </a>
-          </div>
-        </form>
-
-        <p className="text-sm text-center mt-6">
-          Don't have an account?{' '}
-          <a href="/signup" className="text-blue-600 hover:underline">
-            Sign up
-          </a>
-        </p>
+          </p>
+        </div>
       </div>
     </div>
   );
